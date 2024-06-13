@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="static/home.css">
-    <link rel="stylesheet" href="static/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-container">
             <div class="brand">
-                <a href="/">Hotel Price Management</a>
+                <a href="{{ url_for('home') }}">Hotel Price Management</a>
             </div>
             <div class="navbar-links">
-                <a href="/viewer">Viewer</a>
-                <a href="/editor">Editor</a>
-                <a href="/manage_groups">Manage Groups</a>
-                <a href="/manage_hotels">Manage Hotels</a>
-                <a href="/">Home</a>
+                <a href="{{ url_for('viewer') }}">Viewer</a>
+                <a href="{{ url_for('editor') }}">Editor</a>
+                <a href="{{ url_for('manage_groups') }}">Manage Groups</a>
+                <a href="{{ url_for('manage_hotels') }}">Manage Hotels</a>
+                <a href="{{ url_for('home') }}">Home</a>
             </div>
         </div>
     </nav>
