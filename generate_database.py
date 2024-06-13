@@ -155,7 +155,7 @@ with app.app_context():
                     hotel_id=hotel.hotel_id,
                     date=start_date + timedelta(days=i),
                     room_type=room_type,
-                    price=str(round(random.uniform(100, 300),0)) 
+                    price=int(random.uniform(100, 300))
                 )
                 db.session.add(room_price)
 

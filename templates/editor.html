@@ -6,9 +6,9 @@
 
     <!-- Include flatpickr CSS from CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="static/editor.css">
-    <link rel="stylesheet" href="static/home.css">
-    <link rel="stylesheet" href="static/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='editor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
     <style>
         .existing-price {
             background-color: #ffcccc; /* Light red for existing prices */
@@ -22,14 +22,14 @@
     <nav class="navbar">
         <div class="navbar-container">
             <div class="brand">
-                <a href="/">Hotel Price Management</a>
+                <a href="{{ url_for('home') }}">Hotel Price Management</a>
             </div>
             <div class="navbar-links">
-                <a href="/viewer">Viewer</a>
-                <a href="/editor">Editor</a>
-                <a href="/manage_groups">Manage Groups</a>
-                <a href="/manage_hotels">Manage Hotels</a>
-                <a href="/">Home</a>
+                <a href="{{ url_for('viewer') }}">Viewer</a>
+                <a href="{{ url_for('editor') }}">Editor</a>
+                <a href="{{ url_for('manage_groups') }}">Manage Groups</a>
+                <a href="{{ url_for('manage_hotels') }}">Manage Hotels</a>
+                <a href="{{ url_for('home') }}">Home</a>
             </div>
         </div>
     </nav>
@@ -37,7 +37,7 @@
     <h1>Insert Hotel Prices</h1>
 
     <!-- Group Selection Form -->
-    <form method="get" action="/editor">
+    <form method="get" action="{{ url_for('editor') }}">
         <select name="group_id" id="group_id" required>
             <option value="">Select a group</option>
             {% for group in groups %}
@@ -45,7 +45,7 @@
             {% endfor %}
         </select>
         <div id="dateInputs" style="position: relative;">
-            <input type="text" id="datePicker" name="dates" placeholder="Select dates" required style="font-family: Arial, sans-serif;font: inherit;font-size: 100%;">
+            <input type="text" id="datePicker" name="dates" placeholder="select dates" required style="font-family: Arial, sans-serif;font: inherit;font-size: 100%;">
             <button type="button" id="closeCalendar" class="btn">Close Calendar</button>
         </div>
         <button type="submit">Load Editor</button>
@@ -54,7 +54,7 @@
     {% if group_name and hotels and dates %}
     <!-- Prices Insertion Form -->
     <h1>Insert Hotel Prices for Group: {{ group_name }}</h1>
-    <form method="post" action="/insert_prices" class="form-table">
+    <form method="post" action="{{ url_for('insert_prices') }}" class="form-table">
         <div class="table-container">
             <table>
                 <thead>
@@ -80,10 +80,10 @@
                                 {% set king_price = prices[hotel.name][date.strftime('%Y-%m-%d')]['King'] %}
                                 {% set queen_price = prices[hotel.name][date.strftime('%Y-%m-%d')]['Queen'] %}
                                 <td>
-                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][King]" value="{{ king_price }}" {% if king_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
+                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][King]" value="{{ king_price if king_price is not none else '' }}" {% if king_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
                                 </td>
                                 <td>
-                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][Queen]" value="{{ queen_price }}" {% if queen_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
+                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][Queen]" value="{{ queen_price if queen_price is not none else '' }}" {% if queen_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
                                 </td>
                             {% endfor %}
                         </tr>

@@ -298,4 +298,4 @@ def manage_hotels():
     return render_template('manage_hotels.html', groups=groups, hotels=hotels)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
