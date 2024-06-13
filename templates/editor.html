@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert Hotel Prices</title>
+
+    <!-- Include flatpickr CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="static/editor.css">
+    <link rel="stylesheet" href="static/home.css">
+    <link rel="stylesheet" href="static/navbar.css">
+    <style>
+        .existing-price {
+            background-color: #ffcccc; /* Light red for existing prices */
+        }
+        .new-price {
+            background-color: #f2f2f2; /* Light gray for new inputs */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="brand">
+                <a href="/">Hotel Price Management</a>
+            </div>
+            <div class="navbar-links">
+                <a href="/viewer">Viewer</a>
+                <a href="/editor">Editor</a>
+                <a href="/manage_groups">Manage Groups</a>
+                <a href="/manage_hotels">Manage Hotels</a>
+                <a href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Title -->
+    <h1>Insert Hotel Prices</h1>
+
+    <!-- Group Selection Form -->
+    <form method="get" action="/editor">
+        <select name="group_id" id="group_id" required>
+            <option value="">Select a group</option>
+            {% for group in groups %}
+                <option value="{{ group.hotel_group_id }}">{{ group.name }}</option>
+            {% endfor %}
+        </select>
+        <div id="dateInputs" style="position: relative;">
+            <input type="text" id="datePicker" name="dates" placeholder="Select dates" required style="font-family: Arial, sans-serif;font: inherit;font-size: 100%;">
+            <button type="button" id="closeCalendar" class="btn">Close Calendar</button>
+        </div>
+        <button type="submit">Load Editor</button>
+    </form>
+
+    {% if group_name and hotels and dates %}
+    <!-- Prices Insertion Form -->
+    <h1>Insert Hotel Prices for Group: {{ group_name }}</h1>
+    <form method="post" action="/insert_prices" class="form-table">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="1">{{ group_name }}</th>
+                        {% for hotel in hotels %}
+                            <th colspan="2">{{ hotel.name }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        {% for hotel in hotels %}
+                            <th>K</th>
+                            <th>Q</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for date in dates %}
+                        <tr>
+                            <td>{{ date.strftime('%d-%m-%Y') }}</td>
+                            {% for hotel in hotels %}
+                                {% set king_price = prices[hotel.name][date.strftime('%Y-%m-%d')]['King'] %}
+                                {% set queen_price = prices[hotel.name][date.strftime('%Y-%m-%d')]['Queen'] %}
+                                <td>
+                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][King]" value="{{ king_price }}" {% if king_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
+                                </td>
+                                <td>
+                                    <input type="text" name="prices[{{ hotel.hotel_id }}][{{ date.strftime('%Y-%m-%d') }}][Queen]" value="{{ queen_price }}" {% if queen_price is not none %} class="existing-price" {% else %} class="new-price" {% endif %}>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button class="sb-button" type="submit">Submit Prices</button>
+    </form>
+    {% endif %}
+
+    <!-- Include flatpickr JS from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize flatpickr on the date input field with multiple date selection
+            const datePicker = flatpickr("#datePicker", {
+                mode: "multiple",
+                dateFormat: "Y-m-d",
+            });
+
+            // Function to close the calendar
+            document.getElementById("closeCalendar").addEventListener("click", function() {
+                datePicker.close();
+            });
+
+            // Optional: Enable editing of existing prices
+            const existingPrices = document.querySelectorAll(".existing-price");
+            existingPrices.forEach(input => {
+                input.removeAttribute("readonly");
+            });
+        });
+    </script>
+</body>
+</html>

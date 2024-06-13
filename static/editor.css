@@ -1,0 +1,223 @@
+/* Reset default browser styles */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styles */
+h1 {
+    color: #333;
+    margin: 20px 0;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: #007bff;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.brand a {
+    color: #fff;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.navbar-links {
+    display: flex;
+}
+
+.navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    background-color: #0056b3;
+}
+
+/* Form styles */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+    margin-top: 20px;
+    margin-left: 32%;
+}
+
+.form-table {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0%;
+    /* border-radius: 8px; */
+    /* box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1); */
+}
+
+/* label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+} */
+
+select,
+input[type="text"],
+input[type="number"],
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+input[type="number"]{
+    padding: 10px;
+    margin-bottom: 0px;
+    border: 1px solid #ddd;
+    /* border-radius: 100px; */
+}
+
+
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+button:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.sb-button {
+    width: 15%;
+    margin-top: 2%;
+    margin-left: 10%;
+    border-radius:
+    20px;
+    box-shadow: 0 12px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Date inputs container styles */
+#dateInputs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#closeCalendar {
+    background-color: #dc3545;
+    margin-left: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#closeCalendar:hover {
+    background-color: #c82333;
+}
+
+.existing-price {
+    background-color: #ffcccc; /* Light red for existing prices */
+}
+
+.new-price {
+    background-color: #f2f2f2; /* Light gray for new inputs */
+}
+
+
+.table-container {
+    width: 80%; /* Ensure the table container spans the full width */
+    margin-left: 10%;
+}
+
+table {
+    border-collapse: collapse;
+    background-color: #fff; /* White background for better readability */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+th {
+    background-color: #007bff; /* Header background color */
+    color: white; /* Header text color */
+    padding: 25px; /* Padding inside header cells */
+    font-weight: bold; /* Bold font weight for headers */
+    text-align: center; /* Center-align text in headers */
+}
+
+td {
+    padding: 5px; /* Padding inside table cells */
+    text-align: center; /* Center-align text in table cells */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling on small screens */
+    }
+
+    th, td {
+        padding: 10px; /* Adjusted padding for smaller screens */
+    }
+}

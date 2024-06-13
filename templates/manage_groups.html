@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Groups</title>
+    <link rel="stylesheet" href="static/manage_groups.css">
+    <link rel="stylesheet" href="static/home.css">
+    <link rel="stylesheet" href="static/navbar.css">
+    <link rel="stylesheet" href="static/manage_groups.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="brand">
+                <a href="/">Hotel Price Management</a>
+            </div>
+            <div class="navbar-links">
+                <a href="/viewer">Viewer</a>
+                <a href="/editor">Editor</a>
+                <a href="/manage_groups">Manage Groups</a>
+                <a href="/manage_hotels">Manage Hotels</a>
+                <a href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Manage Hotel Groups</h1>
+
+        <div class="form-container">
+            <form action="/manage_groups" method="post" class="add-group-form">
+                <h2>Add New Group</h2>
+                <input type="hidden" name="action" value="add">
+                <label for="name">Group Name:</label>
+                <input type="text" name="name" id="name" placeholder="Enter group name" required>
+                <button type="submit">Add Group</button>
+            </form>
+
+            <div class="existing-groups">
+                <h2>Select Group</h2>
+                <form action="/manage_groups" method="post" id="group-form">
+                    <input type="hidden" id="group-action" name="action"> <!-- Hidden input field for action -->
+                    <label for="group">Existing Groups:</label>
+                    <select name="group_id" id="group_id" required>
+                        <option value="" disabled selected>Select a group</option>
+                        {% for group in groups %}
+                            <option value="{{ group.hotel_group_id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="group-actions">
+                        <input type="text" name="name" placeholder="New Group Name" required>
+                        <button type="button" class="delete-btn" onclick="setAction('delete')">Delete</button>
+                        <button type="button" class="update-btn" onclick="setAction('update')">Update</button>
+                        <button type="submit">Submit</button> <!-- Submit button outside the form for triggering the action -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setAction(action) {
+            document.getElementById('group-action').value = action; // Set the value of the hidden action field
+        }
+    </script>
+</body>
+</html>

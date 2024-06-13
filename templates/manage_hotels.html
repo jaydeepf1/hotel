@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Hotels</title>
+    <link rel="stylesheet" href="static/manage_hotels.css">
+    <link rel="stylesheet" href="static/home.css">
+    <link rel="stylesheet" href="static/navbar.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="brand">
+                <a href="/">Hotel Price Management</a>
+            </div>
+            <div class="navbar-links">
+                <a href="/viewer">Viewer</a>
+                <a href="/editor">Editor</a>
+                <a href="/manage_groups">Manage Groups</a>
+                <a href="/manage_hotels">Manage Hotels</a>
+                <a href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Manage Hotels</h1>
+        <form action="/manage_hotels" method="post" id="add-hotel-form">
+            <input type="hidden" name="action" value="add">
+            <label for="name">Hotel Name:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="group_id">Group:</label>
+            <select name="group_id" id="group_id" required>
+                <option value="" disabled selected>Select a group</option>
+                {% for group in groups %}
+                    <option value="{{ group.hotel_group_id }}">{{ group.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Add Hotel</button>
+        </form>
+        <h2>Existing Hotels</h2>
+        <ul id="hotel-list">
+            <!-- Existing hotels will be populated dynamically -->
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#group_id').change(function() {
+                var groupId = $(this).val();
+                $.ajax({
+                    url: '/get_hotels/' + groupId,
+                    method: 'GET',
+                    success: function(response) {
+                        $('#hotel-list').empty();
+                        response.hotels.forEach(function(hotel) {
+                            var hotelHtml = '<li>' + hotel.name + ' ';
+                            hotelHtml += '<form action="/manage_hotels" method="post" style="display:inline;">';
+                            hotelHtml += '<input type="hidden" name="action" value="delete">';
+                            hotelHtml += '<input type="hidden" name="hotel_id" value="' + hotel.hotel_id + '">';
+                            hotelHtml += '<button type="submit" class="delete-btn">Delete</button>';
+                            hotelHtml += '</form> ';
+                            hotelHtml += '<form action="/manage_hotels" method="post" style="display:inline;">';
+                            hotelHtml += '<input type="hidden" name="action" value="update">';
+                            hotelHtml += '<input type="hidden" name="hotel_id" value="' + hotel.hotel_id + '">';
+                            hotelHtml += '<input type="text" name="name" value="' + hotel.name + '" required>';
+                            hotelHtml += '<button type="submit" class="update-btn">Update</button>';
+                            hotelHtml += '</form></li>';
+                            $('#hotel-list').append(hotelHtml);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

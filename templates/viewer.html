@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Hotel Prices</title>
+    <link rel="stylesheet" href="static/viewer.css">
+    <link rel="stylesheet" href="static/navbar.css">
+    <!-- Include flatpickr CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="brand">
+                <a href="/">Hotel Price Management</a>
+            </div>
+            <div class="navbar-links">
+                <a href="/viewer">Viewer</a>
+                <a href="/editor">Editor</a>
+                <a href="/manage_groups">Manage Groups</a>
+                <a href="/manage_hotels">Manage Hotels</a>
+                <a href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+    <h1>View Hotel Prices</h1>
+    <form action="/view_prices" method="post">
+        <label for="group_id">Hotel Group:</label>
+        <select name="group_id" id="group_id">
+            {% for group in groups %}
+                <option value="{{ group.hotel_group_id }}">{{ group.name }}</option>
+            {% endfor %}
+        </select>
+        <div id="dateInputs" style="position: relative;"> <!-- Add relative positioning -->
+            <label for="date">Select Date Range:</label>
+            <input type="text" id="datePicker" name="dates" required>
+            <button type="button" id="closeCalendar" class="btn">Close Calendar</button> <!-- Button to close calendar -->
+        </div>
+        <input type="submit" value="View Prices" class="btn">
+    </form>
+
+    <!-- Include flatpickr JS from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize flatpickr on the date input field with range selection
+            const datePicker = flatpickr("#datePicker", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                position: "above" // Set calendar position above the input field
+            });
+
+            // Function to close the calendar
+            document.getElementById("closeCalendar").addEventListener("click", function() {
+                datePicker.close();
+            });
+        });
+    </script>
+</body>
+</html>

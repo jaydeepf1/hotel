@@ -1,0 +1,111 @@
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.brand a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+/* Headings */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Form */
+.add-group-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.add-group-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.add-group-form button {
+    padding: 8px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/* Existing Groups */
+.existing-groups select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.group-actions button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: #d9534f;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.group-actions input[type="text"] {
+    width: 200px;
+    padding: 8px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+}
+
+label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.1rem;
+    margin-left: 20px;
+    color: #333; /* Text color */
+}

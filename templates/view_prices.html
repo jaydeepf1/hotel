@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Prices</title>
+    <link rel="stylesheet" href="static/view_prices.css">
+    <link rel="stylesheet" href="static/navbar.css">
+</head>
+<body>
+    <!-- Navbar code -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="brand">
+                <a href="/">Hotel Price Management</a>
+            </div>
+            <div class="navbar-links">
+                <a href="/viewer">Viewer</a>
+                <a href="/editor">Editor</a>
+                <a href="/manage_groups">Manage Groups</a>
+                <a href="/manage_hotels">Manage Hotels</a>
+                <a href="/">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Title -->
+    <h1>Hotel Prices for Group: {{ group_name }}</h1>
+    
+    <!-- Table -->
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="1">{{ group_name }}</th>
+                {% for hotel, _ in prices.items() %}
+                    <th colspan="2">{{ hotel }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>Date</th>
+                {% for _ in prices.items() %}
+                    <th>K</th>
+                    <th>QQ</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for date in dates %}
+                <tr>
+                    <td>{{ date.strftime('%d-%m-%Y') }}</td>
+                    {% for _, prices_by_date in prices.items() %}
+                        <td>
+                            {% set king_price = prices_by_date[date.strftime('%Y-%m-%d')]['King'] %}
+                            {{ king_price if king_price is not none else "-" }}
+                        </td>
+                        <td>
+                            {% set queen_price = prices_by_date[date.strftime('%Y-%m-%d')]['Queen'] %}
+                            {{ queen_price if queen_price is not none else "-" }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Home button -->
+    <a href="/" class="btn">Home</a> 
+</body>
+</html>
