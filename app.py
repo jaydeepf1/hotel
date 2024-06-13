@@ -1,12 +1,25 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+import logging
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hotels.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG,  # Set log level to DEBUG for development
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',  # Log file name
+                    filemode='a')  # Append mode
+
+# Define loggers
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())  # Add StreamHandler to output to console in addition to file
+
+
+# Database Models
 class HotelGroup(db.Model):
     __tablename__ = 'hotel_group'
     hotel_group_id = db.Column(db.Integer, primary_key=True)
@@ -32,13 +45,18 @@ class RoomPrice(db.Model):
     room_type = db.Column(db.String(50), nullable=False)
     price = db.Column(db.String(50))
 
+
+# Flask Routes
+
 @app.route('/')
 def home():
+    app.logger.info('Home page accessed')
     return render_template('home.html')
 
 @app.route('/editor', methods=['GET', 'POST'])
 def editor():
     if request.method == 'POST':
+        app.logger.debug('POST request received on editor page')
         prices = request.form.to_dict()
         if prices:
             for key, value in prices.items():
@@ -108,45 +126,50 @@ def editor():
 
 @app.route('/insert_prices', methods=['POST'])
 def insert_prices():
-    prices = request.form.to_dict()
-    
-    if prices:
-        for key, value in prices.items():
-            parts = key.split('][')
-            hotel_id = int(parts[0].split('[')[-1])
-            date_str = parts[1]
-            room_type = parts[2].split(']')[0]
+    if request.method == 'POST':
+        app.logger.debug('Insert prices request received')
+        prices = request.form.to_dict()
+        
+        if prices:
+            for key, value in prices.items():
+                parts = key.split('][')
+                hotel_id = int(parts[0].split('[')[-1])
+                date_str = parts[1]
+                room_type = parts[2].split(']')[0]
 
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            price = value if value.isdigit() or value.upper() == "SOLD" else None
+                date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                price = value if value.isdigit() or value.upper() == "SOLD" else None
 
-            existing_price = RoomPrice.query.filter_by(hotel_id=hotel_id, date=date, room_type=room_type).first()
+                existing_price = RoomPrice.query.filter_by(hotel_id=hotel_id, date=date, room_type=room_type).first()
 
-            if existing_price:
-                existing_price.price = price
-                db.session.commit()
-            else:
-                if price is not None:
-                    db.session.add(RoomPrice(hotel_id=hotel_id, date=date, room_type=room_type, price=price))
+                if existing_price:
+                    existing_price.price = price
                     db.session.commit()
+                else:
+                    if price is not None:
+                        db.session.add(RoomPrice(hotel_id=hotel_id, date=date, room_type=room_type, price=price))
+                        db.session.commit()
 
-        return redirect(url_for('editor'))
-    
+            return redirect(url_for('editor'))
+        
     return "No prices submitted"
 
 @app.route('/viewer', methods=['GET'])
 def viewer():
+    app.logger.info('Viewer page accessed')
     groups = HotelGroup.query.all()
     return render_template('viewer.html', groups=groups)
 
 @app.route('/get_hotels/<group_id>', methods=['GET'])
 def get_hotels(group_id):
+    app.logger.debug(f'Fetching hotels for group ID: {group_id}')
     hotels = db.session.query(Hotel).join(HotelGroupAssociation).filter(HotelGroupAssociation.hotel_group_id == group_id).all()
     hotels_list = [{'hotel_id': hotel.hotel_id, 'name': hotel.name} for hotel in hotels]
     return jsonify({'hotels': hotels_list})
 
 @app.route('/get_group_info/<group_id>', methods=['GET'])
 def get_group_info(group_id):
+    app.logger.debug(f'Fetching group info for group ID: {group_id}')
     group = HotelGroup.query.get(group_id)
     if group:
         hotels = Hotel.query.join(HotelGroupAssociation).filter(HotelGroupAssociation.hotel_group_id == group_id).all()
@@ -157,7 +180,7 @@ def get_group_info(group_id):
 
 @app.route('/view_prices', methods=['POST'])
 def view_prices():
-    print(request.form)
+    app.logger.debug('View prices request received')
     group_id = request.form['group_id']
     dates_str = request.form['dates']
     
@@ -167,6 +190,7 @@ def view_prices():
         start_date = datetime.strptime(start_date_str.strip(), '%Y-%m-%d').date()
         end_date = datetime.strptime(end_date_str.strip(), '%Y-%m-%d').date()
     except ValueError:
+        app.logger.error('Incorrect date format received in view_prices')
         return "Incorrect date format. Please use YYYY-MM-DD to YYYY-MM-DD format.", 400
 
     # Generate a list of dates within the range
@@ -205,17 +229,20 @@ def manage_groups():
             new_group = HotelGroup(name=name)
             db.session.add(new_group)
             db.session.commit()
+            app.logger.info(f'Added new group: {name}')
         elif action == 'delete':
             group_id = request.form['group_id']
             group = HotelGroup.query.get(group_id)
             db.session.delete(group)
             db.session.commit()
+            app.logger.info(f'Deleted group with ID: {group_id}')
         elif action == 'update':
             group_id = request.form['group_id']
             name = request.form['name']
             group = HotelGroup.query.get(group_id)
             group.name = name
             db.session.commit()
+            app.logger.info(f'Updated group name. Group ID: {group_id}, New Name: {name}')
         return redirect(url_for('manage_groups'))
     
     groups = HotelGroup.query.all()
@@ -234,28 +261,36 @@ def manage_hotels():
             if existing_hotel:
                 # If the hotel already exists, use its ID
                 hotel_id = existing_hotel.hotel_id
+                app.logger.info(f'Hotel already exists. Using existing hotel ID: {hotel_id}')
             else:
                 # If the hotel doesn't exist, create a new one
                 new_hotel = Hotel(name=name)
                 db.session.add(new_hotel)
                 db.session.commit()
                 hotel_id = new_hotel.hotel_id
-            
+                app.logger.info(f'Added new hotel: {name}, Group ID: {group_id}')
+
             # Create association between the hotel and the group
             association = HotelGroupAssociation(hotel_id=hotel_id, hotel_group_id=group_id)
             db.session.add(association)
             db.session.commit()
+            app.logger.info(f'Associated hotel {name} with group ID: {group_id}')
+            
         elif action == 'delete':
             hotel_id = request.form['hotel_id']
             hotel = Hotel.query.get(hotel_id)
             db.session.delete(hotel)
             db.session.commit()
+            app.logger.info(f'Deleted hotel with ID: {hotel_id}')
+            
         elif action == 'update':
             hotel_id = request.form['hotel_id']
             name = request.form['name']
             hotel = Hotel.query.get(hotel_id)
             hotel.name = name
             db.session.commit()
+            app.logger.info(f'Updated hotel name. Hotel ID: {hotel_id}, New Name: {name}')
+            
         return redirect(url_for('manage_hotels'))
     
     groups = HotelGroup.query.all()
